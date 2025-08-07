@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow AI - Intelligent Daily Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .task-card {
+            transition: all 0.3s ease;
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-brain text-3xl"></i>
+                    <h1 class="text-3xl font-bold">TaskFlow AI</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="voice-input" class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+            </div>
+            <p class="mt-2 text-white/80">Transform your thoughts into structured daily plans</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Input Section -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                    Describe Your Day
+                </h2>
+                <div class="space-y-4">
+                    <textarea 
+                        id="task-input" 
+                        placeholder="Tell me about your day... For example: 'I need to finish the UI for the dashboard, follow up with the client, prepare slides for tomorrow, and maybe finally go grocery shopping.'"
+                        class="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    ></textarea>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <button id="generate-plan" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center space-x-2">
+                                <i class="fas fa-magic"></i>
+                                <span>Generate Plan</span>
+                            </button>
+                            <button id="clear-input" class="text-gray-600 hover:text-gray-800 px-4 py-3 rounded-lg transition-colors">
+                                <i class="fas fa-trash mr-2"></i>Clear
+                            </button>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            <span id="char-count">0</span> characters
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading" class="hidden bg-white rounded-lg shadow-lg p-8 text-center">
+                <div class="loading">
+                    <i class="fas fa-cog fa-spin text-4xl text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Creating Your Plan...</h3>
+                    <p class="text-gray-600">AI is analyzing your tasks and organizing them</p>
+                </div>
+            </div>
+
+            <!-- Plan Results -->
+            <div id="plan-results" class="hidden space-y-6">
+                <!-- Categories -->
+                <div id="categories-section" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Categories will be populated here -->
+                </div>
+
+                <!-- Schedule -->
+                <div id="schedule-section" class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-clock text-green-500 mr-2"></i>
+                        Suggested Schedule
+                    </h3>
+                    <div id="schedule-list" class="space-y-3">
+                        <!-- Schedule items will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <button id="save-plan" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                                <i class="fas fa-save mr-2"></i>Save Plan
+                            </button>
+                            <button id="export-plan" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                                <i class="fas fa-download mr-2"></i>Export
+                            </button>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-gray-600">Total Estimated Time:</p>
+                            <p id="total-time" class="text-lg font-semibold text-gray-800">0 hours</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 TaskFlow AI. Built with ❤️ and AI.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html> 
